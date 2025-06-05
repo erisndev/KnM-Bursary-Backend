@@ -18,7 +18,7 @@ const {
   deleteAdminNote,
 } = require("../controllers/applicant.controller");
 const uploadMiddlewareWithErrorHandling = require("../auth/uploadMidd");
-const authenticate = require("../auth/middleware");
+const { authenticate } = require("../auth/middleware");
 
 // Routes
 router.post(
