@@ -1,4 +1,18 @@
 const multer = require("multer");
+
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../cloudinary/cloudinary.js");
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => ({
+    folder: "applications",
+    format: "jpg",
+    resource_type: "image",
+    public_id: `${file.fieldname}-${Date.now()}`,
+  }),
+});
+
 const upload = multer({
   storage: storage,
   limits: {
