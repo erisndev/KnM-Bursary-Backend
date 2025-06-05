@@ -776,8 +776,8 @@ const uploadMiddleware = upload.fields([
 
 // Export the new functions along with existing ones
 module.exports = {
-  createApplication: [uploadMiddleware, createApplication],
-  updateApplicationDocuments: [uploadMiddleware, updateApplicationDocuments],
+  createApplication,
+  updateApplicationDocuments,
   getAllApplications,
   getApplicationById,
   getApplicationByUserId,
