@@ -17,11 +17,16 @@ const {
   updateAdminNote,
   deleteAdminNote,
 } = require("../controllers/applicant.controller");
-const uploadMiddleware = require("../auth/uploadMidd");
+const uploadMiddlewareWithErrorHandling = require("../auth/uploadMidd");
 const authenticate = require("../auth/middleware");
 
 // Routes
-router.post("/create", authenticate, uploadMiddleware, createApplication);
+router.post(
+  "/create",
+  authenticate,
+  uploadMiddlewareWithErrorHandling,
+  createApplication
+);
 router.get("/", getAllApplications);
 router.get("/stats", getApplicationStats);
 router.get("/unnotified", getUnnotifiedApplications);
@@ -30,7 +35,7 @@ router.get("/:id", getApplicationById);
 router.put(
   "/:id/documents",
   authenticate,
-  uploadMiddleware,
+  uploadMiddlewareWithErrorHandling,
   updateApplicationDocuments
 );
 router.put("/:id/notify", markAsNotified);

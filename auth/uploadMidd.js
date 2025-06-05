@@ -1,22 +1,23 @@
 const multer = require("multer");
-
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../cloudinary/cloudinary.js");
 
+// Setup Cloudinary storage with multer-storage-cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => ({
     folder: "applications",
-    format: "jpg",
-    resource_type: "image",
+    format: "jpg", // you may want to allow original format, otherwise all images become jpg
+    resource_type: "image", // Cloudinary resource type, you can adjust if supporting PDFs etc.
     public_id: `${file.fieldname}-${Date.now()}`,
   }),
 });
 
+// Multer instance with file size limit and file type filter
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
@@ -37,6 +38,7 @@ const upload = multer({
   },
 });
 
+// Dynamic additional documents fields
 const additionalDocsCount = 5;
 const additionalDocFields = Array.from(
   { length: additionalDocsCount },
@@ -46,6 +48,7 @@ const additionalDocFields = Array.from(
   })
 );
 
+// Fields accepted by multer for upload
 const uploadMiddleware = upload.fields([
   { name: "transcript", maxCount: 1 },
   { name: "nationalIdCard", maxCount: 1 },
@@ -57,4 +60,13 @@ const uploadMiddleware = upload.fields([
   ...additionalDocFields,
 ]);
 
-module.exports = uploadMiddleware;
+const uploadMiddlewareWithErrorHandling = (req, res, next) => {
+  uploadMiddleware(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    next();
+  });
+};
+
+module.exports = uploadMiddlewareWithErrorHandling;
