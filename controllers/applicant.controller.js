@@ -7,43 +7,7 @@ const {
   extractDocumentPaths,
   updateDocumentPaths,
 } = require("../cloudinary/fileHandler.js");
-// Configure multer for file uploads
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-//     cb(
-//       null,
-//       file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-//     );
-//   },
-// });
 
-// const upload = multer({
-//   storage: storage,
-//   limits: {
-//     fileSize: 10 * 1024 * 1024, // 10MB limit
-//   },
-//   fileFilter: (req, file, cb) => {
-//     const allowedTypes = [
-//       "application/pdf",
-//       "image/jpeg",
-//       "image/png",
-//       "image/jpg",
-//     ];
-//     if (allowedTypes.includes(file.mimetype)) {
-//       cb(null, true);
-//     } else {
-//       cb(
-//         new Error(
-//           "Invalid file type. Only PDF, JPEG, and PNG files are allowed."
-//         )
-//       );
-//     }
-//   },
-// });
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => ({
@@ -77,8 +41,6 @@ const upload = multer({
     }
   },
 });
-
-// Middleware for handling multiple file uploads
 
 const createApplication = async (req, res) => {
   try {
@@ -431,143 +393,6 @@ const getApplicationStats = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch application statistics" });
   }
 };
-// const updateApplicationDocuments = async (req, res) => {
-//   try {
-//     console.log("Request body:", req.body);
-//     console.log("Request files:", req.files);
-
-//     const { id } = req.params;
-//     const userId = req.user?.userId || req.body.userId;
-
-//     // Check if userId is provided
-//     if (!userId) {
-//       return res.status(400).json({ error: "User ID is required." });
-//     }
-
-//     // Find the application
-//     const application = await Applicant.findById(id);
-//     if (!application) {
-//       return res.status(404).json({ error: "Application not found." });
-//     }
-
-//     // Check if the user owns this application
-//     if (application.userId.toString() !== userId.toString()) {
-//       return res
-//         .status(403)
-//         .json({ error: "Unauthorized to update this application." });
-//     }
-
-//     // Check if application can be updated (not approved/rejected)
-//     if (
-//       application.status === "approved" ||
-//       application.status === "rejected"
-//     ) {
-//       return res.status(400).json({
-//         error: "Cannot update documents for approved or rejected applications.",
-//       });
-//     }
-
-//     // Prepare new document paths
-//     const updatedDocuments = { ...application.documents };
-
-//     if (req.files) {
-//       // Handle main documents
-//       const docTypes = [
-//         "transcript",
-//         "nationalIdCard",
-//         "proofOfResidence",
-//         "letterOfRecommendation",
-//         "resume",
-//         "coverLetter",
-//         "payslip",
-//       ];
-
-//       docTypes.forEach((docType) => {
-//         if (req.files[docType] && req.files[docType][0]) {
-//           // Delete old file if it exists
-//           if (updatedDocuments[docType]) {
-//             const fs = require("fs");
-//             const oldFilePath = updatedDocuments[docType];
-//             if (fs.existsSync(oldFilePath)) {
-//               fs.unlinkSync(oldFilePath);
-//             }
-//           }
-//           updatedDocuments[docType] = req.files[docType][0].path;
-//         }
-//       });
-
-//       // Handle additional documents
-//       const newAdditionalDocs = [];
-//       for (let i = 0; i < 5; i++) {
-//         const fieldName = `additionalDoc${i}`;
-//         if (req.files[fieldName] && req.files[fieldName][0]) {
-//           newAdditionalDocs.push(req.files[fieldName][0].path);
-//         }
-//       }
-
-//       // If new additional docs are provided, replace the old ones
-//       if (newAdditionalDocs.length > 0) {
-//         // Delete old additional documents
-//         if (
-//           updatedDocuments.additionalDocs &&
-//           Array.isArray(updatedDocuments.additionalDocs)
-//         ) {
-//           const fs = require("fs");
-//           updatedDocuments.additionalDocs.forEach((filePath) => {
-//             if (fs.existsSync(filePath)) {
-//               fs.unlinkSync(filePath);
-//             }
-//           });
-//         }
-//         updatedDocuments.additionalDocs = newAdditionalDocs;
-//       }
-//     }
-
-//     // Update the application
-//     application.documents = updatedDocuments;
-//     application.lastModified = new Date();
-
-//     // Add to step history if documents were updated
-//     if (req.files && Object.keys(req.files).length > 0) {
-//       application.stepHistory.push({
-//         step: application.currentStep,
-//         stepTitle: "Documents Updated",
-//         timestamp: new Date(),
-//         notes: "Supporting documents were updated by the applicant",
-//       });
-//     }
-
-//     await application.save();
-
-//     res.status(200).json({
-//       message: "Documents updated successfully.",
-//       application: {
-//         id: application._id,
-//         documents: application.documents,
-//         lastModified: application.lastModified,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error updating application documents:", error);
-
-//     // Handle validation errors
-//     if (error.name === "ValidationError") {
-//       const validationErrors = Object.values(error.errors).map(
-//         (err) => err.message
-//       );
-//       return res.status(400).json({
-//         error: "Validation failed",
-//         details: validationErrors,
-//       });
-//     }
-
-//     res.status(500).json({
-//       error: "Failed to update documents.",
-//       details:
-//         process.env.NODE_ENV === "development" ? error.message : undefined,
-//     });
-//   }
-// };
 const updateApplicationDocuments = async (req, res) => {
   try {
     const { id } = req.params;
@@ -759,21 +584,6 @@ const deleteAdminNote = async (req, res) => {
   }
 };
 
-const uploadMiddleware = upload.fields([
-  { name: "transcript", maxCount: 1 },
-  { name: "nationalIdCard", maxCount: 1 },
-  { name: "proofOfResidence", maxCount: 1 },
-  { name: "letterOfRecommendation", maxCount: 1 },
-  { name: "resume", maxCount: 1 },
-  { name: "coverLetter", maxCount: 1 },
-  { name: "payslip", maxCount: 1 },
-  { name: "additionalDoc0", maxCount: 1 },
-  { name: "additionalDoc1", maxCount: 1 },
-  { name: "additionalDoc2", maxCount: 1 },
-  { name: "additionalDoc3", maxCount: 1 },
-  { name: "additionalDoc4", maxCount: 1 },
-]);
-
 // Export the new functions along with existing ones
 module.exports = {
   createApplication,
@@ -787,7 +597,6 @@ module.exports = {
   updateApplicationStatus,
   addAdminNote,
   getApplicationStats,
-
   getAdminNotes,
   updateAdminNote,
   deleteAdminNote,
