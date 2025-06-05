@@ -10,16 +10,26 @@ const adminRoutes = require("./routes/admin.route.js");
 dotenv.config();
 
 const app = express();
-// const cloudinary = require("./cloudinary/cloudinary.js");
 
-// Middleware
-const allowedOrigins = [process.env.FRONTEND_URL, process.env.Sec_FRONTEND_URL];
+// ✅ Clean CORS Configuration
+const allowedOrigins = [
+  "https://kn-m-bursary-management-system.vercel.app",
+  "https://kn-m-bursary-admin.vercel.app",
+];
+
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -33,6 +43,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/applications", bursaryRoutes);
 app.use("/api/admin", adminRoutes);
 
+// Root route for testing
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
