@@ -65,12 +65,50 @@ try {
   const bursaryRoutes = require("./routes/applicant.route.js");
   const adminRoutes = require("./routes/admin.route.js");
 
+  // Debug: Check if routes are functions
+  console.log("userRoutes type:", typeof userRoutes);
+  console.log("bursaryRoutes type:", typeof bursaryRoutes);
+  console.log("adminRoutes type:", typeof adminRoutes);
+
+  // Debug: Check controller imports
+  console.log("Checking user controller...");
+  const userController = require("./controllers/user.controller.js");
+  console.log("User controller exports:", Object.keys(userController));
+  Object.keys(userController).forEach((key) => {
+    console.log(`${key}: ${typeof userController[key]}`);
+  });
+
+  console.log("Checking applicant controller...");
+  const applicantController = require("./controllers/applicant.controller.js");
+  console.log(
+    "Applicant controller exports:",
+    Object.keys(applicantController)
+  );
+  Object.keys(applicantController).forEach((key) => {
+    console.log(`${key}: ${typeof applicantController[key]}`);
+  });
+
+  console.log("Checking admin controller...");
+  const adminController = require("./controllers/admin.controller.js");
+  console.log("Admin controller exports:", Object.keys(adminController));
+  Object.keys(adminController).forEach((key) => {
+    console.log(`${key}: ${typeof adminController[key]}`);
+  });
+
+  // Check middleware
+  console.log("Checking middleware...");
+  const uploadMiddleware = require("./auth/uploadMidd");
+  const authenticate = require("./auth/middleware");
+  console.log("uploadMiddleware type:", typeof uploadMiddleware);
+  console.log("authenticate type:", typeof authenticate);
+
   // API routes
   app.use("/api/users", userRoutes);
   app.use("/api/applications", bursaryRoutes);
   app.use("/api/admin", adminRoutes);
 } catch (error) {
   console.error("Error loading routes:", error.message);
+  console.error("Stack trace:", error.stack);
   console.error(
     "Please check your route files for syntax errors or invalid route patterns"
   );
