@@ -54,7 +54,7 @@ const uploadMiddleware = upload.fields([
   { name: "nationalIdCard", maxCount: 1 },
   { name: "proofOfResidence", maxCount: 1 },
   { name: "letterOfRecommendation", maxCount: 1 },
-  { name: "resume", maxCount: 1 },
+  { name: "proofOfBankAccount", maxCount: 1 },
   { name: "coverLetter", maxCount: 1 },
   { name: "payslip", maxCount: 1 },
   ...additionalDocFields,

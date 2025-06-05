@@ -7,7 +7,7 @@ function extractDocumentPaths(files) {
     "nationalIdCard",
     "proofOfResidence",
     "letterOfRecommendation",
-    "resume",
+    "proofOfBankAccount",
     "coverLetter",
     "payslip",
   ];
@@ -44,7 +44,7 @@ function updateDocumentPaths(existingDocs = {}, files = {}) {
     "nationalIdCard",
     "proofOfResidence",
     "letterOfRecommendation",
-    "resume",
+    "proofOfBankAccount",
     "coverLetter",
     "payslip",
   ];
