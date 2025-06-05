@@ -393,6 +393,7 @@ const getApplicationStats = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch application statistics" });
   }
 };
+
 const updateApplicationDocuments = async (req, res) => {
   try {
     const { id } = req.params;

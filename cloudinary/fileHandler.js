@@ -15,19 +15,19 @@ function extractDocumentPaths(files) {
   const documents = {};
 
   if (files) {
-    // Add known documents
     documentFields.forEach((field) => {
       if (files[field]?.[0]) {
-        documents[field] = files[field][0].path;
+        const file = files[field][0];
+        documents[field] = file.path || file.filename || file.url; // Updated here
       }
     });
 
-    // Add additional documents dynamically
     const additionalDocs = [];
     for (let i = 0; i < 5; i++) {
       const field = `additionalDoc${i}`;
       if (files[field]?.[0]) {
-        additionalDocs.push(files[field][0].path);
+        const file = files[field][0];
+        additionalDocs.push(file.path || file.filename || file.url); // Updated here
       }
     }
     if (additionalDocs.length > 0) {
