@@ -12,10 +12,7 @@ dotenv.config();
 const app = express();
 
 // ✅ Clean CORS Configuration
-const allowedOrigins = [
-  "https://kn-m-bursary-management-system.vercel.app",
-  "https://kn-m-bursary-admin.vercel.app",
-];
+const allowedOrigins = [process.env.FRONTEND_URL, process.env.Sec_FRONTEND_URL];
 
 app.use(
   cors({
