@@ -1,3 +1,4 @@
+// applicant.route.js
 const express = require("express");
 const router = express.Router();
 const {
@@ -16,26 +17,21 @@ const {
   updateAdminNote,
   deleteAdminNote,
 } = require("../controllers/applicant.controller");
+const uploadMiddleware = require("../auth/uploadMidd");
 
-// Make sure you have the uploads directory
-const fs = require("fs");
-const path = require("path");
-const { authenticate } = require("../auth/middleware");
-
-const uploadsDir = path.join(__dirname, "../uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-router.post("/create", authenticate, createApplication);
+// Routes
+router.post("/create", authenticate, uploadMiddleware, createApplication);
 router.get("/", getAllApplications);
 router.get("/stats", getApplicationStats);
 router.get("/unnotified", getUnnotifiedApplications);
 router.get("/user/:userId", getApplicationByUserId);
 router.get("/:id", getApplicationById);
-
-router.put("/:id/documents", authenticate, updateApplicationDocuments);
-
+router.put(
+  "/:id/documents",
+  authenticate,
+  uploadMiddleware,
+  updateApplicationDocuments
+);
 router.put("/:id/notify", markAsNotified);
 router.put("/:id/step", authenticate, updateApplicationStep);
 router.put("/:id/status", authenticate, updateApplicationStatus);

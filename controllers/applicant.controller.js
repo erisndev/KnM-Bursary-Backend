@@ -79,20 +79,6 @@ const upload = multer({
 });
 
 // Middleware for handling multiple file uploads
-const uploadMiddleware = upload.fields([
-  { name: "transcript", maxCount: 1 },
-  { name: "nationalIdCard", maxCount: 1 },
-  { name: "proofOfResidence", maxCount: 1 },
-  { name: "letterOfRecommendation", maxCount: 1 },
-  { name: "resume", maxCount: 1 },
-  { name: "coverLetter", maxCount: 1 },
-  { name: "payslip", maxCount: 1 },
-  { name: "additionalDoc0", maxCount: 1 },
-  { name: "additionalDoc1", maxCount: 1 },
-  { name: "additionalDoc2", maxCount: 1 },
-  { name: "additionalDoc3", maxCount: 1 },
-  { name: "additionalDoc4", maxCount: 1 },
-]);
 
 const createApplication = async (req, res) => {
   try {
@@ -772,6 +758,21 @@ const deleteAdminNote = async (req, res) => {
     res.status(500).json({ error: "Failed to delete admin note" });
   }
 };
+
+const uploadMiddleware = upload.fields([
+  { name: "transcript", maxCount: 1 },
+  { name: "nationalIdCard", maxCount: 1 },
+  { name: "proofOfResidence", maxCount: 1 },
+  { name: "letterOfRecommendation", maxCount: 1 },
+  { name: "resume", maxCount: 1 },
+  { name: "coverLetter", maxCount: 1 },
+  { name: "payslip", maxCount: 1 },
+  { name: "additionalDoc0", maxCount: 1 },
+  { name: "additionalDoc1", maxCount: 1 },
+  { name: "additionalDoc2", maxCount: 1 },
+  { name: "additionalDoc3", maxCount: 1 },
+  { name: "additionalDoc4", maxCount: 1 },
+]);
 
 // Export the new functions along with existing ones
 module.exports = {
