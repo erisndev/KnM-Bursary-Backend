@@ -78,7 +78,7 @@ const applicantSchema = new mongoose.Schema({
   parent1Relationship: { type: String, required: true },
   parent1EmploymentStatus: { type: String, required: true },
   parent1Occupation: { type: String },
-  parent1MonthlyIncome: { type: Number },
+  parent1MonthlyIncome: { type: String },
 
   // Parent 2 (Optional)
   parent2FirstName: { type: String },
@@ -87,7 +87,7 @@ const applicantSchema = new mongoose.Schema({
   parent2Relationship: { type: String },
   parent2EmploymentStatus: { type: String },
   parent2Occupation: { type: String },
-  parent2MonthlyIncome: { type: Number },
+  parent2MonthlyIncome: { type: String },
 
   // Documents
   documents: {
