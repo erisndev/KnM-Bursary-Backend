@@ -12,6 +12,7 @@ const applicantSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
+  idnumber: { type: Number, required: true, unique: true },
   dob: { type: Date, required: true },
   gender: { type: String, required: true },
   nationality: { type: String, required: true },
