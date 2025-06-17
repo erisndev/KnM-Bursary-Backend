@@ -5,12 +5,18 @@ const cloudinary = require("../cloudinary/cloudinary.js");
 // Setup Cloudinary storage with multer-storage-cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: async (req, file) => ({
-    folder: "applications",
-    format: "jpg", // you may want to allow original format, otherwise all images become jpg
-    resource_type: "image", // Cloudinary resource type, you can adjust if supporting PDFs etc.
-    public_id: `${file.fieldname}-${Date.now()}`,
-  }),
+  params: async (req, file) => {
+    // Determine resource type based on file mimetype
+    const resourceType = file.mimetype === "application/pdf" ? "raw" : "image";
+
+    return {
+      folder: "applications",
+      // Remove format specification to preserve original format
+      // format: "jpg", // ❌ This was forcing conversion to JPG
+      resource_type: resourceType, // ✅ Dynamic resource type based on file
+      public_id: `${file.fieldname}-${Date.now()}`,
+    };
+  },
 });
 
 // Multer instance with file size limit and file type filter

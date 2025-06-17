@@ -1,46 +1,9 @@
 const User = require("../models/user.model.js");
 const Applicant = require("../models/applicant.model.js");
-const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("../cloudinary/cloudinary.js");
 const {
   extractDocumentPaths,
   updateDocumentPaths,
 } = require("../cloudinary/fileHandler.js");
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: async (req, file) => ({
-    folder: "applications",
-    format: "jpg",
-    resource_type: "image",
-    public_id: `${file.fieldname}-${Date.now()}`,
-  }),
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB
-  },
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/jpg",
-    ];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(
-        new Error(
-          "Invalid file type. Only PDF, JPEG, and PNG files are allowed."
-        )
-      );
-    }
-  },
-});
 
 const createApplication = async (req, res) => {
   try {

@@ -11,30 +11,26 @@ function extractDocumentPaths(files) {
     "coverLetter",
     "payslip",
   ];
-
   const documents = {};
-
   if (files) {
     documentFields.forEach((field) => {
       if (files[field]?.[0]) {
         const file = files[field][0];
-        documents[field] = file.path || file.filename || file.url; // Updated here
+        documents[field] = file.path || file.filename || file.url;
       }
     });
-
     const additionalDocs = [];
     for (let i = 0; i < 5; i++) {
       const field = `additionalDoc${i}`;
       if (files[field]?.[0]) {
         const file = files[field][0];
-        additionalDocs.push(file.path || file.filename || file.url); // Updated here
+        additionalDocs.push(file.path || file.filename || file.url);
       }
     }
     if (additionalDocs.length > 0) {
       documents.additionalDocs = additionalDocs;
     }
   }
-
   return documents;
 }
 
@@ -48,7 +44,6 @@ function updateDocumentPaths(existingDocs = {}, files = {}) {
     "coverLetter",
     "payslip",
   ];
-
   const updatedDocs = { ...existingDocs };
 
   // Replace main documents
@@ -68,39 +63,47 @@ function updateDocumentPaths(existingDocs = {}, files = {}) {
       newAdditionalDocs.push(files[field][0].path);
     }
   }
-
   if (newAdditionalDocs.length > 0) {
     if (Array.isArray(updatedDocs.additionalDocs)) {
       updatedDocs.additionalDocs.forEach(deleteFileIfExists);
     }
     updatedDocs.additionalDocs = newAdditionalDocs;
   }
-
   return updatedDocs;
 }
 
-function deleteFileIfExists(publicIdOrUrl) {
+// ✅ Improved delete function that handles both resource types
+async function deleteFileIfExists(publicIdOrUrl) {
   if (!publicIdOrUrl) return;
 
-  // If it's a URL, extract the public_id
+  // Extract public_id from URL
   const parts = publicIdOrUrl.split("/");
   const fileName = parts[parts.length - 1];
   const [publicId] = fileName.split(".");
+  const fullPublicId = `applications/${publicId}`;
 
-  // Attempt to delete from both raw and image resource types
-  cloudinary.uploader
-    .destroy(`applications/${publicId}`, { resource_type: "image" })
-    .catch(() =>
-      cloudinary.uploader.destroy(`applications/${publicId}`, {
-        resource_type: "raw",
-      })
-    )
-    .catch((err) =>
-      console.warn("Failed to delete Cloudinary file:", err.message)
-    );
+  try {
+    // Try deleting as raw resource first (for PDFs)
+    await cloudinary.uploader.destroy(fullPublicId, { resource_type: "raw" });
+    console.log(`Successfully deleted raw resource: ${fullPublicId}`);
+  } catch (rawError) {
+    try {
+      // If raw deletion fails, try as image resource
+      await cloudinary.uploader.destroy(fullPublicId, {
+        resource_type: "image",
+      });
+      console.log(`Successfully deleted image resource: ${fullPublicId}`);
+    } catch (imageError) {
+      console.warn(
+        `Failed to delete Cloudinary file ${fullPublicId}:`,
+        imageError.message
+      );
+    }
+  }
 }
 
 module.exports = {
   extractDocumentPaths,
   updateDocumentPaths,
+  deleteFileIfExists,
 };
