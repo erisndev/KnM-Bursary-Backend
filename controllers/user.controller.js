@@ -126,7 +126,7 @@ const forgotPassword = async (req, res) => {
     console.error("Error in forgotPassword:", err);
     res.status(500).json({
       message:
-        "We're experiencing technical difficulties. Please try again later or contact support if the problem persists.",
+        "Something went wrong while processing your request. Please try again later.",
     });
   }
 };
